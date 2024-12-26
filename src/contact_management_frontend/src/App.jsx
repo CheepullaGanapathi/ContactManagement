@@ -1,31 +1,34 @@
-import { useState } from 'react';
-import { contact_management_backend } from 'declarations/contact_management_backend';
+import React, { useState } from 'react';
+import ContactForm from './ContactForm';
+import ContactList from './ContactList';
+import index from './index.css';
 
-function App() {
-  const [greeting, setGreeting] = useState('');
+const App = () => {
+  const [contacts, setContacts] = useState([]);
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    contact_management_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
+  const addContact = (contact) => {
+    setContacts([...contacts, { id: Date.now(), ...contact }]);
+  };
+
+  const updateContact = (id, updatedContact) => {
+    setContacts(contacts.map((contact) => (contact.id === id ? updatedContact : contact)));
+  };
+
+  const deleteContact = (id) => {
+    setContacts(contacts.filter((contact) => contact.id !== id));
+  };
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <div className="styles.appContainer">
+      <h1>Contact Management System</h1>
+      <ContactForm onAddContact={addContact} />
+      <ContactList
+        contacts={contacts}
+        onUpdateContact={updateContact}
+        onDeleteContact={deleteContact}
+      />
+    </div>
   );
-}
+};
 
 export default App;
